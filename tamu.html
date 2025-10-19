@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buku Tamu Digital - Perpustakaan UT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #667eea;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .tab-btn.active {
+            background: #764ba2;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .rating-container {
+            display: flex;
+            gap: 10px;
+            font-size: 2em;
+        }
+
+        .star {
+            cursor: pointer;
+            color: #ddd;
+            transition: all 0.2s;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #ffd700;
+            transform: scale(1.2);
+        }
+
+        .btn {
+            padding: 12px 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-export {
+            background: #28a745;
+            margin-left: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+        }
+
+        .guest-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .guest-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .guest-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .guest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .guest-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .guest-date {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .guest-rating {
+            color: #ffd700;
+            font-size: 1.2em;
+        }
+
+        .guest-purpose {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin: 5px 0;
+        }
+
+        .guest-message {
+            margin-top: 10px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-container input,
+        .filter-container select {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Buku Tamu Digital</h1>
+            <p>Perpustakaan Universitas Terbuka</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('form')">✍️ Isi Buku Tamu</button>
+            <button class="tab-btn" onclick="switchTab('list')">👥 Daftar Pengunjung</button>
+            <button class="tab-btn" onclick="switchTab('stats')">📊 Statistik</button>
+        </div>
+
+        <!-- Tab Form -->
+        <div id="form" class="tab-content active">
+            <div class="card">
+                <div id="successMessage" class="success-message">
+                    ✅ Terima kasih! Data Anda telah tersimpan.
+                </div>
+
+                <h2 style="margin-bottom: 20px; color: #333;">Silakan Isi Buku Tamu</h2>
+                <form id="guestForm">
+                    <div class="form-group">
+                        <label for="name">Nama Lengkap *</label>
+                        <input type="text" id="name" required placeholder="Masukkan nama lengkap">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" required placeholder="contoh@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Nomor Telepon</label>
+                        <input type="tel" id="phone" placeholder="08xxxxxxxxxx">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="purpose">Keperluan *</label>
+                        <select id="purpose" required>
+                            <option value="">-- Pilih Keperluan --</option>
+                            <option value="Membaca">Membaca</option>
+                            <option value="Meminjam Buku">Meminjam Buku</option>
+                            <option value="Mengembalikan Buku">Mengembalikan Buku</option>
+                            <option value="Mencari Referensi">Mencari Referensi</option>
+                            <option value="Mengerjakan Tugas">Mengerjakan Tugas</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Rating Kepuasan *</label>
+                        <div class="rating-container" id="ratingContainer">
+                            <span class="star" data-rating="1">★</span>
+                            <span class="star" data-rating="2">★</span>
+                            <span class="star" data-rating="3">★</span>
+                            <span class="star" data-rating="4">★</span>
+                            <span class="star" data-rating="5">★</span>
+                        </div>
+                        <input type="hidden" id="rating" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Pesan / Feedback</label>
+                        <textarea id="message" placeholder="Berikan saran atau kritik untuk perpustakaan kami..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn">📝 Kirim Buku Tamu</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tab List -->
+        <div id="list" class="tab-content">
+            <div class="card">
+                <h2 style="margin-bottom: 20px; color: #333;">Daftar Pengunjung</h2>
+                
+                <div class="filter-container">
+                    <input type="text" id="searchInput" placeholder="🔍 Cari nama pengunjung...">
+                    <select id="filterPurpose">
+                        <option value="">Semua Keperluan</option>
+                        <option value="Membaca">Membaca</option>
+                        <option value="Meminjam Buku">Meminjam Buku</option>
+                        <option value="Mengembalikan Buku">Mengembalikan Buku</option>
+                        <option value="Mencari Referensi">Mencari Referensi</option>
+                        <option value="Mengerjakan Tugas">Mengerjakan Tugas</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                    <button class="btn btn-export" onclick="exportData()">📥 Export Data</button>
+                </div>
+
+                <div id="guestList" class="guest-list"></div>
+            </div>
+        </div>
+
+        <!-- Tab Stats -->
+        <div id="stats" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="totalGuests">0</h3>
+                    <p>Total Pengunjung</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="avgRating">0</h3>
+                    <p>Rating Rata-rata</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="todayGuests">0</h3>
+                    <p>Pengunjung Hari Ini</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 style="margin-bottom: 20px; color: #333;">Statistik Keperluan</h2>
+                <div id="purposeStats"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize data from localStorage
+        let guests = JSON.parse(localStorage.getItem('guestbook') || '[]');
+        let selectedRating = 0;
+
+        // Rating system
+        const stars = document.querySelectorAll('.star');
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.rating);
+                document.getElementById('rating').value = selectedRating;
+                updateStars();
+            });
+
+            star.addEventListener('mouseover', function() {
+                const rating = parseInt(this.dataset.rating);
+                stars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.style.color = '#ffd700';
+                    } else {
+                        s.style.color = '#ddd';
+                    }
+                });
+            });
+
+            star.addEventListener('mouseout', function() {
+                updateStars();
+            });
+        });
+
+        function updateStars() {
+            stars.forEach((star, index) => {
+                if (index < selectedRating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // Form submission
+        document.getElementById('guestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const guest = {
+                id: Date.now(),
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                purpose: document.getElementById('purpose').value,
+                rating: selectedRating,
+                message: document.getElementById('message').value,
+                date: new Date().toISOString()
+            };
+
+            guests.unshift(guest);
+            localStorage.setItem('guestbook', JSON.stringify(guests));
+
+            // Show success message
+            const successMsg = document.getElementById('successMessage');
+            successMsg.classList.add('show');
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 3000);
+
+            // Reset form
+            this.reset();
+            selectedRating = 0;
+            updateStars();
+
+            // Update displays
+            displayGuests();
+            updateStats();
+        });
+
+        // Switch tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'list') {
+                displayGuests();
+            } else if (tabName === 'stats') {
+                updateStats();
+            }
+        }
+
+        // Display guests
+        function displayGuests(filter = '') {
+            const listContainer = document.getElementById('guestList');
+            const purposeFilter = document.getElementById('filterPurpose').value;
+            
+            let filteredGuests = guests;
+
+            // Filter by search
+            if (filter) {
+                filteredGuests = filteredGuests.filter(g => 
+                    g.name.toLowerCase().includes(filter.toLowerCase())
+                );
+            }
+
+            // Filter by purpose
+            if (purposeFilter) {
+                filteredGuests = filteredGuests.filter(g => g.purpose === purposeFilter);
+            }
+
+            if (filteredGuests.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📭 Belum ada pengunjung</h3>
+                        <p>Jadilah yang pertama mengisi buku tamu!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listContainer.innerHTML = filteredGuests.map(guest => `
+                <div class="guest-item">
+                    <div class="guest-header">
+                        <div>
+                            <div class="guest-name">${guest.name}</div>
+                            <div class="guest-date">${formatDate(guest.date)}</div>
+                        </div>
+                        <div class="guest-rating">${'★'.repeat(guest.rating)}${'☆'.repeat(5-guest.rating)}</div>
+                    </div>
+                    <div class="guest-purpose">${guest.purpose}</div>
+                    ${guest.message ? `<div class="guest-message">"${guest.message}"</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = guests.length;
+            const avgRating = total > 0 ? (guests.reduce((sum, g) => sum + g.rating, 0) / total).toFixed(1) : 0;
+            
+            const today = new Date().toDateString();
+            const todayCount = guests.filter(g => new Date(g.date).toDateString() === today).length;
+
+            document.getElementById('totalGuests').textContent = total;
+            document.getElementById('avgRating').textContent = avgRating + ' ★';
+            document.getElementById('todayGuests').textContent = todayCount;
+
+            // Purpose statistics
+            const purposeCounts = {};
+            guests.forEach(g => {
+                purposeCounts[g.purpose] = (purposeCounts[g.purpose] || 0) + 1;
+            });
+
+            const purposeStatsHTML = Object.entries(purposeCounts)
+                .sort((a, b) => b[1] - a[1])
+                .map(([purpose, count]) => `
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="font-weight: 600;">${purpose}</span>
+                            <span>${count} pengunjung</span>
+                        </div>
+                        <div style="background: #e0e0e0; height: 10px; border-radius: 5px; overflow: hidden;">
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 100%; width: ${(count/total*100)}%;"></div>
+                        </div>
+                    </div>
+                `).join('');
+
+            document.getElementById('purposeStats').innerHTML = purposeStatsHTML || '<p style="text-align:center; color:#999;">Belum ada data</p>';
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            };
+            return date.toLocaleDateString('id-ID', options);
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            displayGuests(e.target.value);
+        });
+
+        document.getElementById('filterPurpose').addEventListener('change', function() {
+            displayGuests(document.getElementById('searchInput').value);
+        });
+
+        // Export data
+        function exportData() {
+            if (guests.length === 0) {
+                alert('Tidak ada data untuk di-export');
+                return;
+            }
+
+            const csvContent = [
+                ['Nama', 'Email', 'Telepon', 'Keperluan', 'Rating', 'Pesan', 'Tanggal'],
+                ...guests.map(g => [
+                    g.name,
+                    g.email,
+                    g.phone || '-',
+                    g.purpose,
+                    g.rating,
+                    g.message || '-',
+                    formatDate(g.date)
+                ])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `buku-tamu-${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        // Initialize on load
+        displayGuests();
+        updateStats();
+    </script>
+</body>
+</html>
